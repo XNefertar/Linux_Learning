@@ -64,12 +64,19 @@ void checkCommand(char* command){
     else if(*start == '>'){
       *start = '\0';
       start++;
+      if(*start == '>'){
+        redir_type = APPEND_REDIR;
+        ++start;
+        skip_space(start);
+        redir_file = start;
+        break;
+      }
+      
       skip_space(start);
       redir_file = start;
       redir_type = OUTPUT_REDIR;
       break;
     }
-
 
 
     else{
@@ -124,7 +131,7 @@ int main(){
               perror("wrong open");
               exit(EXIT_FAILURE);
             }
-            
+            dup2(fd, STDIN_FILENO);
             break;
           }
 
@@ -135,24 +142,35 @@ int main(){
               perror("wrong open");
               exit(EXIT_FAILURE);
             }
-
+            dup2(fd, STDOUT_FILENO);
             break;
           }
 
         case APPEND_REDIR:
           {
+            redir_type = OUTPUT_REDIR;
+            fd = open(redir_file, O_WRONLY | O_CREAT | O_APPEND, 0666);
+            if(fd < 0){
+              perror("wrong open");
+              exit(EXIT_FAILURE);
+            }
+            dup2(fd, STDOUT_FILENO);
 
-
+            break;
+          }
+        case NONE_REDIR:
+          {
             break;
           }
         default:
           {
-            perror("wrong condition");
+            perror("default condition");
+            // exit(EXIT_FAILURE);
             break;
           }
 
       }
-      dup2(fd, redir_type);
+      close(fd);
       execvp(myargv[0], myargv);
       exit(0);
     }
