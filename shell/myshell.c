@@ -148,7 +148,7 @@ int main(){
 
         case APPEND_REDIR:
           {
-            redir_type = OUTPUT_REDIR;
+            redir_type = APPEND_REDIR;
             fd = open(redir_file, O_WRONLY | O_CREAT | O_APPEND, 0666);
             if(fd < 0){
               perror("wrong open");
