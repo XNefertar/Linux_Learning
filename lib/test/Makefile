@@ -12,8 +12,19 @@ output:
 	cp ./*.hpp mylib/include
 	cp ./*.a mylib/lib
 
+
+.PHONY:pack
+pack:
+	tar -czf mylib.tar.gz ./mylib
+
+.PHONY:unpack
+unpack:
+	tar -xzf mylib.tar.gz
+
+
 .PHONY:clean
 clean:
 	rm ./*.o
 	rm -rf libmymath.a
 	rm -rf mylib
+	rm -rf mylib.tar.gz
