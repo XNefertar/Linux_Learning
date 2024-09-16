@@ -11,7 +11,7 @@ output:
 	mkdir -p mylib/lib
 	cp ./*.hpp mylib/include
 	cp ./*.a mylib/lib
-
+	
 
 .PHONY:pack
 pack:
