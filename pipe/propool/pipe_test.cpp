@@ -13,9 +13,14 @@
 // 宏函数创建一个用于生成伪随机数的函数
 #define MakeSeed() srand((unsigned long)time(nullptr) ^ getpid() ^ 0x171237 ^ rand() % 1234)
 
+// 函数指针
 using func_ptr = void(*)();
+
+// 函数指针容器
 std::vector<func_ptr> func_task;
 
+// 存储父进程信息
+// 便于父子进程间进行通信
 class sub_end_ptr{
 public:
     static int _num;
@@ -23,6 +28,8 @@ public:
     pid_t _sub_id;
     int _write_fd;
 
+    // 创建普适命名规则
+    // 用于统一标识进程信息
     sub_end_ptr(pid_t sub_id, int write_fd)
         :_sub_id(sub_id),
         _write_fd(write_fd)
@@ -34,7 +41,7 @@ public:
 
 };
 
-
+// 模拟待处理函数
 void func1(){
     std::cout << "Task : IO任务" << std::endl;
 }
@@ -60,8 +67,9 @@ int send_task(const sub_end_ptr& process, int task_num){
 // 用于获取父进程提供的待处理任务码
 int recv_task(int read_fd){
     int code = 0;
+    // 从管道读取待处理任务码
     ssize_t s = read(read_fd, &code, sizeof code);
-
+    // 判断读取内容
     if(s == 4) return code;
     else if(s <= 0) return -1;
     else return 0;
@@ -84,6 +92,7 @@ void creat_sub_process(std::vector<sub_end_ptr>& subs, std::vector<func_ptr>& fu
             while(1){
                 // 处理任务
                 int command_code = recv_task(fds[0]);
+                // 根据任务码执行任务
                 if(command_code >= 0 && command_code < func_task.size()){
                     func_task[command_code]();
                 }
@@ -113,7 +122,7 @@ void load_balance_control(std::vector<sub_end_ptr>& sub_set){
 
 }
 
-
+// 类内static变量必须在类外进行初始化
 int sub_end_ptr::_num = 0;
 
 int main(){
@@ -123,6 +132,7 @@ int main(){
     func_task.push_back(func2);
     func_task.push_back(func3);
 
+    // 存储进程信息容器
     std::vector<sub_end_ptr> sub_set;
 
     creat_sub_process(sub_set, func_task);
