@@ -8,4 +8,4 @@ client:client.cc
 
 .PHONY:clean
 clean:
-	rm -rf server client
+	rm -rf server client named_pipe
