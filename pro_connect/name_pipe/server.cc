@@ -4,7 +4,7 @@ int main(){
     bool is_success = load_process(PATH_NAME);
     if(is_success){
         std::cout << "server process is start # " << std::endl;
-        int id = open(PATH_NAME, O_RDONLY, O_TRUNC);
+        int id = open(PATH_NAME, O_RDONLY | O_TRUNC);
         std::cout << "server process is ready." << std::endl;
         char buffer[1024]{};
         while(1){
