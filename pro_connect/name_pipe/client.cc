@@ -1,7 +1,7 @@
 #include "comm.hpp"
 
 int main(){
-    int id = open(PATH_NAME, O_WRONLY, O_TRUNC);
+    int id = open(PATH_NAME, O_WRONLY | O_TRUNC);
     std::cout << "client process is ready." << std::endl;
     if(id >= 0){
         char buffer[1024]{};
