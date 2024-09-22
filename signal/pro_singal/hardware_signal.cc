@@ -21,10 +21,7 @@ int main(){
     signal(SIGSEGV, handler);
     std::cout << "段错误即将发生，请注意..." << std::endl;
     sleep(1);
-    {
-        int* p = nullptr;
-        *p = 10;
-    }
-
+    int* p = nullptr;
+    *p = 10;
     return 0;
 }
