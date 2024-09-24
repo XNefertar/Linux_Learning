@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <vector>
 #include <string>
+#include "lock_guard.hpp"
 
 pthread_mutex_t mtx;
 int tickets = 10000;
@@ -24,15 +25,16 @@ void* get_tickets(void* args){
     // end
 
     while(1){
-        pthread_mutex_lock(&mtx);
+        // pthread_mutex_lock(&mtx);
+        lock_guard lock(&mtx);
 
         if(tickets > 0){
             usleep(100);
             std::cout << str << " has got a ticket... " << "left: " << tickets-- << std::endl;
-            pthread_mutex_unlock(&mtx);
+            // pthread_mutex_unlock(&mtx);
         }
         else{
-            pthread_mutex_unlock(&mtx);
+            // pthread_mutex_unlock(&mtx);
             break;
         }
         usleep(1000);

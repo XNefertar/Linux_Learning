@@ -10,7 +10,7 @@
 # encapsulate_thread:encapsulate_thread.cc Thread.hpp
 # 	g++ -std=c++11 -o $@ $^ -lpthread
 
-thread_block:thread_block.cc Thread.hpp
+thread_block:thread_block.cc Thread.hpp lock_guard.hpp
 	g++ -std=c++11 -o $@  $^ -lpthread
 
 .PHONY:clean
