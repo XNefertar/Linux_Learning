@@ -26,17 +26,18 @@ void* get_tickets(void* args){
 
     while(1){
         // pthread_mutex_lock(&mtx);
-        lock_guard lock(&mtx);
-
-        if(tickets > 0){
-            usleep(100);
-            std::cout << str << " has got a ticket... " << "left: " << tickets-- << std::endl;
-            // pthread_mutex_unlock(&mtx);
-        }
-        else{
-            // pthread_mutex_unlock(&mtx);
-            break;
-        }
+        {
+            lock_guard lock(&mtx);
+            if(tickets > 0){
+                usleep(100);
+                std::cout << str << " has got a ticket... " << "left: " << tickets-- << std::endl;
+                // pthread_mutex_unlock(&mtx);
+            }
+            else{
+                // pthread_mutex_unlock(&mtx);
+                break;
+            }
+        }    
         usleep(1000);
     }
 
