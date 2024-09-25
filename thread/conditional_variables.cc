@@ -34,6 +34,7 @@ int main(){
         char* name_buffer = new char[1024]{};
         snprintf(name_buffer, 1024, "thread:%d", i + 1);
         pthread_create(&tid, nullptr, start_routine, name_buffer);
+        tid_vec.push_back(tid);
     }
     while(1){
         sleep(1);
