@@ -38,7 +38,11 @@ int main(){
     }
     while(1){
         sleep(1);
+        // 单个线程唤醒
         pthread_cond_signal(&cond);
+
+        // 所有线程全部唤醒
+        // pthread_cond_broadcast(&cond);
     }
 
     for(auto& it : tid_vec){
