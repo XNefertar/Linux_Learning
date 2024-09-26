@@ -11,14 +11,14 @@
 
 const int max_size = 10;
 
-// template<typename T>
+template<typename T>
 class Block_Queue{
 private:
     pthread_cond_t consumer_cond;
     pthread_cond_t producer_cond;
     pthread_mutex_t mtx;
-    std::queue<int> _queue;
-
+    std::queue<T> _queue;
+    // Task<T> _task;
 public:
     // 构造函数内初始化
     Block_Queue(){
@@ -29,7 +29,7 @@ public:
     }
 
     // 生产任务
-    void push(const int& in){
+    void push(const T& in){
         lock_guard lk(&mtx);
         while(is_full()){
             pthread_cond_wait(&producer_cond, &mtx);
@@ -39,7 +39,7 @@ public:
     }
 
     // 消费任务
-    void pop(int* out){
+    void pop(T* out){
         lock_guard lk(&mtx);
         while(is_empty()){
             pthread_cond_wait(&consumer_cond, &mtx);
@@ -65,8 +65,6 @@ public:
         pthread_mutex_destroy(&mtx);
     }
 };
-
-
 
 
 #endif
