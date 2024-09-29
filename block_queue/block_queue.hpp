@@ -5,8 +5,12 @@
 #include <queue>
 #include <functional>
 #include <random>
+#include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include "lock_guard.hpp"
 
 const int max_size = 10;
@@ -50,6 +54,20 @@ public:
         pthread_cond_signal(&producer_cond);
     }
 
+    // 存储任务
+    // void save(const T& messege){
+    //     const std::string target = "./log.txt";
+    //     FILE *fp = fopen(target.c_str(), "a+");
+    //     if (!fp)
+    //     {
+    //         std::cerr << "fopen error" << std::endl;
+    //         return;
+    //     }
+    //     fputs(message.c_str(), fp);
+    //     fputs("\n", fp);
+    //     fclose(fp);
+    // }
+
     // 判断
     bool is_empty(){
         return _queue.empty();
@@ -57,6 +75,7 @@ public:
     bool is_full(){
         return _queue.size() == max_size;
     }
+
 
     // 析构，销毁条件变量和互斥量
     ~Block_Queue(){

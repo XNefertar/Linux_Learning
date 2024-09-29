@@ -3,4 +3,4 @@ main_consume_productor:main_consume_productor.cc
 
 .PHONY:clean
 clean:
-	rm -rf main_consume_productor
+	rm -rf main_consume_productor log.txt
