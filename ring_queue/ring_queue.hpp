@@ -52,8 +52,8 @@ public:
     {
         _donut_list.resize(capacity);
 
+        assert(0 == sem_init(&_space_sem, 0, _capacity));
         assert(0 == sem_init(&_data_sem, 0, 0));
-        assert(0 == sem_init(&_space_sem, 0, 10));
 
         pthread_mutex_init(&_producer_mutex, nullptr);
         pthread_mutex_init(&_consumer_mutex, nullptr);
