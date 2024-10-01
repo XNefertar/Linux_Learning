@@ -10,18 +10,18 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-using func_ptr = std::function<double (int, int, char)>;
+using task_func_ptr = std::function<double (int, int, char)>;
 
 class Cal_Task{
 private:
     int _a;
     int _b;
     char _operator_signal;
-    func_ptr _fptr;
+    task_func_ptr _fptr;
 public:
     // 构造函数
     Cal_Task() = default;
-    Cal_Task(int a, int b, char operator_signal, func_ptr fptr)
+    Cal_Task(int a, int b, char operator_signal, task_func_ptr fptr)
         :_a(a),
         _b(b),
         _operator_signal(operator_signal),
@@ -33,6 +33,7 @@ public:
         char buffer[1024]{};
         snprintf(buffer, sizeof buffer, "%d %c %d = %d", _a, _operator_signal, _b, result);
         return buffer;
+        // std::cout << "res: " << buffer << std::endl;
     }
     std::string to_string(){
         char buffer[1024]{};
