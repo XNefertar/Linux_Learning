@@ -2,9 +2,10 @@
 #include "memory"
 
 int main(){
-    std::unique_ptr<Thread_pool<Cal_Task>> tp(new Thread_pool<Cal_Task>());
-    
-    tp->run();
+    // std::unique_ptr<Thread_pool<Cal_Task>> tp(new Thread_pool<Cal_Task>());
+    Thread_pool<Cal_Task>::getInstance()->run();
+
+    // tp->run();
     int x, y;
     char op;
     while(1)
@@ -20,8 +21,8 @@ int main(){
         // char confirm;
         // std::cin >> confirm;
         // if(confirm == 'y') tp->push(t);
-        tp->push(t);
-        
+        // tp->push(t);
+        Thread_pool<Cal_Task>::getInstance()->push(t);
         sleep(1);
     }
 

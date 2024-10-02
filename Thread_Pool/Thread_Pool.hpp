@@ -3,6 +3,7 @@
 
 #include "vector"
 #include "queue"
+#include "mutex"
 #include "Lock_Guard.hpp"
 #include "Task.hpp"
 #include "Thread.hpp"
@@ -34,29 +35,11 @@ private:
                 t = thread_d->thread_pool->pop();
                 // thread_d->thread_pool->unlock_mutex();
             }
-            std::cout << thread_d->_name << "获取任务成功... " << t.to_string() << "结果是: " << t() << std::endl;
+            std::cout << thread_d->_name << ", 获取任务成功: " << t.to_string() << std::endl << "结果是: " << t() << ", 进程ID是: " << getpid() << std::endl;
         }
         delete thread_d;
         return nullptr;
     }
-
-    int _num;
-    std::vector<Thread*> _threads;
-    std::queue<T> _task_queue;
-    pthread_mutex_t _mtx;
-    pthread_cond_t _cond;
-
-public:
-    void lock_mutex() { pthread_mutex_lock(&_mtx); }
-    void unlock_mutex() { pthread_mutex_unlock(&_mtx); }
-    bool isEmpty() { return _task_queue.empty(); }
-    T pop() {
-        T tmp = _task_queue.front();
-        _task_queue.pop();
-        return tmp;
-    }
-    void thread_wait() { pthread_cond_wait(&_cond, &_mtx); }
-    pthread_mutex_t *get_mutex() { return &_mtx; }
 
     Thread_pool(const int num = global_num)
         :_num(global_num)
@@ -70,6 +53,40 @@ public:
             _threads.push_back(new Thread());
         }
     }
+
+    void operator=(const Thread_pool&)   = delete;
+    Thread_pool(const Thread_pool&) = delete;
+
+    int _num;
+    std::vector<Thread*> _threads;
+    std::queue<T> _task_queue;
+    pthread_mutex_t _mtx;
+    pthread_cond_t _cond;
+
+    static Thread_pool<T>* tp;
+    static std::mutex _single_lock;
+
+public:
+    void lock_mutex() { pthread_mutex_lock(&_mtx); }
+    void unlock_mutex() { pthread_mutex_unlock(&_mtx); }
+    bool isEmpty() { return _task_queue.empty(); }
+    T pop() {
+        T tmp = _task_queue.front();
+        _task_queue.pop();
+        return tmp;
+    }
+    void thread_wait() { pthread_cond_wait(&_cond, &_mtx); }
+    pthread_mutex_t *get_mutex() { return &_mtx; }
+
+    
+    static Thread_pool<T>* getInstance(){
+        if(nullptr == tp){
+            std::lock_guard<std::mutex> _lock(_single_lock);
+            tp = new Thread_pool<T>();
+        }
+        return tp;
+    }
+
 
     void push(const T& in){
         lock_guard lock(&_mtx);
@@ -107,6 +124,12 @@ struct Thread_Data{
     {}
 
 };
+
+template<class T>
+Thread_pool<T>* Thread_pool<T>::tp = nullptr;
+
+template<class T>
+std::mutex Thread_pool<T>::_single_lock{};
 
 
 #endif
