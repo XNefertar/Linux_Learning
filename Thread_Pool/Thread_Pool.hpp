@@ -23,11 +23,17 @@ private:
         Thread_Data<T>* thread_d = static_cast<Thread_Data<T>*>(args);
 
         while(1){
-            // 加锁
-            thread_d->thread_pool->lock_mutex();
-            while(thread_d->thread_pool->isEmpty()) { thread_d->thread_pool->thread_wait(); }
-            T t = thread_d->thread_pool->pop();
-            thread_d->thread_pool->unlock_mutex();
+            // 锁的生命周期和任务的处理需要分开
+            // 使得任务处理阶段可以多线程并发执行
+            T t;
+            {
+                // 加锁
+                lock_guard lock(thread_d->thread_pool->get_mutex());
+                // thread_d->thread_pool->lock_mutex();
+                while(thread_d->thread_pool->isEmpty()) { thread_d->thread_pool->thread_wait(); }
+                t = thread_d->thread_pool->pop();
+                // thread_d->thread_pool->unlock_mutex();
+            }
             std::cout << thread_d->_name << "获取任务成功... " << t.to_string() << "结果是: " << t() << std::endl;
         }
         delete thread_d;
@@ -50,6 +56,7 @@ public:
         return tmp;
     }
     void thread_wait() { pthread_cond_wait(&_cond, &_mtx); }
+    pthread_mutex_t *get_mutex() { return &_mtx; }
 
     Thread_pool(const int num = global_num)
         :_num(global_num)

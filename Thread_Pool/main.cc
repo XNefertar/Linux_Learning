@@ -16,11 +16,12 @@ int main(){
         std::cout << "请输入你要进行的运算#";
         std::cin >> op;
         Cal_Task t(x, y, op, mymath);
-        std::cout << "你刚刚录入了一个任务: " << t.to_string() << "， 确认提交吗？[y/n]# ";
-        char confirm;
-        std::cin >> confirm;
-        if(confirm == 'y') tp->push(t);
-
+        // std::cout << "你刚刚录入了一个任务: " << t.to_string() << "， 确认提交吗？[y/n]# ";
+        // char confirm;
+        // std::cin >> confirm;
+        // if(confirm == 'y') tp->push(t);
+        tp->push(t);
+        
         sleep(1);
     }
 
