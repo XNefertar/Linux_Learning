@@ -8,7 +8,10 @@ int main()
     std::unique_ptr<Thread> ProducerPtr(new Producer(tq));
     std::unique_ptr<Thread> ConsumerPtr(new Consumer(tq));
 
-    ProducerPtr->start();
-    ConsumerPtr->start();
+    ProducerPtr->ThreadStart();
+    ConsumerPtr->ThreadStart();
+
+    ProducerPtr->ThreadStop();
+    ProducerPtr->ThreadStop();
 
 }

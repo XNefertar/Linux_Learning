@@ -1,6 +1,7 @@
 #ifndef __TASK_QUEUE_HPP__
 #define __TASK_QUEUE_HPP__
 
+#include <iostream>
 #include <queue>
 #include "Condition.hpp"
 #include "MutexLockGuard.hpp"
@@ -33,6 +34,7 @@ public:
                 _notFull.Wait();
             }
             _TaskQueue.push(data);
+            std::cout << ">> Producer put number " << data << " in TaskQueue." << std::endl;
             _notEmpty.notifySignal();
         }
     }
@@ -46,6 +48,7 @@ public:
             }
             ret = _TaskQueue.front();
             _TaskQueue.pop();
+            std::cout << "<< Consumer pop data " << ret << " in TaskQueue." << std::endl;
             _notFull.notifySignal();
         }
         return ret;
