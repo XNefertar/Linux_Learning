@@ -1,18 +1,25 @@
+#include <queue>
 #include <pthread.h>
+#include "Task.hpp"
 
 #ifndef __MUTEX_LOCK_GUARD_HPP__
 #define __MUTEX_LOCK_GUARD_HPP__
 
 class MutexLock {
 private:
-    pthread_mutex_t &_mutex;
+    pthread_mutex_t _mutex;
 
 public:
+    MutexLock(){
+        pthread_mutex_init(&_mutex, nullptr);
+    }
+
     MutexLock(pthread_mutex_t &mutex)
         :_mutex(mutex)
     {
         pthread_mutex_init(&_mutex, nullptr);
     }
+
     ~MutexLock() {
         pthread_mutex_destroy(&_mutex);
     }
@@ -88,11 +95,7 @@ public:
     int cond_broadcast(){
         return pthread_cond_broadcast(&_cond);
     }
-
-
 };
-
-
 #endif // __CONDITION_HPP__
 
 
@@ -102,6 +105,54 @@ public:
 #ifndef __TASK_QUEUE_HPP__
 #define __TASK_QUEUE_HPP__
 
+class TaskQueue
+{
+private:
+    int _queueSize;
+    std::queue<Task> _tasksQueue;
+    MutexLock _mutexLock;
+    Condition _notEmpty;
+    Condition _notFull;
+public:
+    bool Empty(){
+        return _tasksQueue.empty();
+    }
+    bool Full(){
+        return _tasksQueue.size() == _queueSize;
+    }
+
+    TaskQueue(int size)
+        : _queueSize(size),
+          _notEmpty(_mutexLock),
+          _notFull(_mutexLock)
+    {}
+
+    void push_task(int param1, int param2){
+        {
+            MutexLockGuard lk(_mutexLock);
+            while(Full()){
+                _notFull.cond_wait();
+            }
+            Task temp(param1, param2);
+            _tasksQueue.push(temp);
+            _notEmpty.cond_singal();
+        }
+    }
+    Task pop_task(){
+        if(Empty()){
+            _notEmpty.cond_wait();
+        }
+        Task temp = _tasksQueue.front();
+        _tasksQueue.pop();
+        return temp;
+    }
+    Task* get_task(){
+        if(!Empty())
+            return &_tasksQueue.front();
+        else
+            return nullptr;
+    }
+};
 
 
 
