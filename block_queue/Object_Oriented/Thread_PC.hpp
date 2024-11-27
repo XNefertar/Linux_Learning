@@ -41,6 +41,7 @@ public:
         if(_isRunning){
             pthread_join(_ThreadID, nullptr);
         }
+        _isRunning = false;
     }
 };
 
