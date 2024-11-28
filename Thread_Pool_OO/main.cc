@@ -7,16 +7,12 @@
 
 int main()
 {
-    TaskQueue _taskQueue(10);
-    int rand = 10;
-
-    for(int i = 0; i < 10; ++i){
-        _taskQueue.push_task(rand - i, rand % (i + 1));
+    ThreadPool tp(4, 10);
+    for(int i = 0; i < 15; ++i){
+        tp.add_task(std::unique_ptr<Task>(new MyTask()).get());
     }
+    tp.thread_pool_start();
+    tp.thread_pool_stop();
 
-    std::unique_ptr<Thread> Thread1(new WorkThread1(_taskQueue));
-
-
-    Thread1->thread_start();
-    Thread1->thread_join();
+    return 0;
 }
