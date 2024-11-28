@@ -100,8 +100,6 @@ public:
 
 
 
-
-
 #ifndef __TASK_QUEUE_HPP__
 #define __TASK_QUEUE_HPP__
 
@@ -109,7 +107,7 @@ class TaskQueue
 {
 private:
     int _queueSize;
-    std::queue<Task> _tasksQueue;
+    std::queue<Task*> _tasksQueue;
     MutexLock _mutexLock;
     Condition _notEmpty;
     Condition _notFull;
@@ -127,33 +125,35 @@ public:
           _notFull(_mutexLock)
     {}
 
-    void push_task(int param1, int param2){
+    void push_task(Task* param){
         {
             MutexLockGuard lk(_mutexLock);
             while(Full()){
                 _notFull.cond_wait();
             }
-            Task temp(param1, param2);
-            _tasksQueue.push(temp);
+            _tasksQueue.push(param);
             _notEmpty.cond_singal();
         }
     }
-    Task pop_task(){
+
+    Task* pop_task(){
         if(Empty()){
             _notEmpty.cond_wait();
         }
-        Task temp = _tasksQueue.front();
+        Task* temp = _tasksQueue.front();
         _tasksQueue.pop();
         return temp;
     }
+    
     Task* get_task(){
-        if(!Empty())
-            return &_tasksQueue.front();
-        else
-            return nullptr;
+        {
+            MutexLockGuard lk(_mutexLock);
+            if(!Empty())
+                return _tasksQueue.front();
+            else
+                return nullptr;
+        }
     }
 };
-
-
 
 #endif // __TASK_QUEUE_HPP__
