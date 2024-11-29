@@ -6,7 +6,7 @@ Thread::Thread()
 {}
 
 void* Thread::ThreadFunc(void* args){
-    Thread* temp = static_cast<Thread*>(args);
+    Thread* temp = static_cast<WorkThread1*>(args);
     if(temp){
         temp->run();
     }

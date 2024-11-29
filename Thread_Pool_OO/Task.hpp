@@ -16,10 +16,6 @@ public:
 class MyTask
     : public Task
 {
-private:
-    PARAM_TYPE _param1;
-    PARAM_TYPE _param2;
-
 public:
     virtual void process() override {
         srand(time(NULL));

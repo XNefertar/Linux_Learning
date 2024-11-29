@@ -14,7 +14,7 @@ CXXFLAGS = -std=c++11
 all: $(TARGET)
 
 $(TARGET): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS) -g
 
 # 清理生成的文件
 clean:

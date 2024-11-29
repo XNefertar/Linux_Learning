@@ -137,12 +137,15 @@ public:
     }
 
     Task* pop_task(){
-        if(Empty()){
-            _notEmpty.cond_wait();
+        {
+            MutexLockGuard lk(_mutexLock);
+            while(Empty()){
+                _notEmpty.cond_wait();
+            }
+            Task* temp = _tasksQueue.front();
+            _tasksQueue.pop();
+            return temp;
         }
-        Task* temp = _tasksQueue.front();
-        _tasksQueue.pop();
-        return temp;
     }
     
     Task* get_task(){
